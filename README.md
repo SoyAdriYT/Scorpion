@@ -1,4 +1,4 @@
-# AstroX by G - MX2 and Pitbull Dog
+# Scorpion by G - MX2 and Pitbull Dog
 
 Discord : https://discord.gg/yZTduXkhMn
 
