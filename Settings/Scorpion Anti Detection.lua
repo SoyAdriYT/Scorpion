@@ -1,4 +1,4 @@
-local function disableAntiCheatScripts()
+local function ScorpionDisableAntiCheatScripts()
     for _, obj in pairs(game:GetDescendants()) do
         if obj:IsA("Script") or obj:IsA("LocalScript") then
             if string.find(obj.Name:lower(), "anti") or string.find(obj.Name:lower(), "cheat") or string.find(obj.Name:lower(), "detect") then
@@ -8,7 +8,7 @@ local function disableAntiCheatScripts()
     end
 end
 
-local function blockKickAndBan()
+local function ScorpionBlockKickAndBan()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
     local oldNamecall = mt.__namecall
@@ -21,7 +21,7 @@ local function blockKickAndBan()
     end)
 end
 
-local function preventRemotes()
+local function ScorpionPreventRemotes()
     local mt = getrawmetatable(game)
     setreadonly(mt, false)
     local oldIndex = mt.__index
@@ -35,7 +35,7 @@ local function preventRemotes()
     end)
 end
 
-local function protectHumanoid()
+local function ScorpionProtectHumanoid()
     local player = game.Players.LocalPlayer
     local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
     if humanoid then
@@ -48,7 +48,7 @@ local function protectHumanoid()
     end
 end
 
-local function protectGameObjects()
+local function ScorpionProtectGameObjects()
     game.DescendantAdded:Connect(function(descendant)
         if descendant:IsA("Script") or descendant:IsA("LocalScript") then
             if string.find(descendant.Name:lower(), "anti") or string.find(descendant.Name:lower(), "cheat") then
@@ -67,7 +67,7 @@ local function protectGameObjects()
     end)
 end
 
-local function bypassByfron()
+local function ScorpionBypassByfron()
     for _, v in pairs(getgc(true)) do
         if type(v) == "function" and islclosure(v) then
             if not isexecutorclosure(v) then
@@ -79,7 +79,7 @@ local function bypassByfron()
     end
 end
 
-local function disableDetectionServices()
+local function ScorpionDisableDetectionServices()
     local services = {
         "ScriptContext", "LogService", "RunService", "Players", "HttpService", "TeleportService", "Stats"
     }
@@ -95,7 +95,7 @@ local function disableDetectionServices()
     end
 end
 
-local function blockHttpRequests()
+local function ScorpionBlockHttpRequests()
     local oldHttpGet = game.HttpGet
     game.HttpGet = function(self, url, ...)
         if string.find(url, "anti") or string.find(url, "cheat") then
@@ -105,11 +105,28 @@ local function blockHttpRequests()
     end
 end
 
-bypassByfron()
-disableAntiCheatScripts()
-blockKickAndBan()
-preventRemotes()
-protectHumanoid()
-protectGameObjects()
-disableDetectionServices()
-blockHttpRequests()
+local function ScorpionBlockAntiCheatDetection()
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local oldNamecall = mt.__namecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if method == "FireServer" or method == "InvokeServer" then
+            local args = {...}
+            if string.find(tostring(self), "Anti") or string.find(tostring(self), "Cheat") then
+                return
+            end
+        end
+        return oldNamecall(self, ...)
+    end)
+end
+
+ScorpionBypassByfron()
+ScorpionDisableAntiCheatScripts()
+ScorpionBlockKickAndBan()
+ScorpionPreventRemotes()
+ScorpionProtectHumanoid()
+ScorpionProtectGameObjects()
+ScorpionDisableDetectionServices()
+ScorpionBlockHttpRequests()
+ScorpionBlockAntiCheatDetection()
